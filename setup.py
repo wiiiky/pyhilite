@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 try:
@@ -10,11 +10,11 @@ setup(
     name='pyhilite',
     version='0.0.1',
     description='Short description',
-    long_description=''.join(open('README.rst').readlines()),
+    long_description=''.join(open('README').readlines()),
     keywords='some, keywords',
     author='yourname',
     author_email='yourmail',
-    license='GPLv2',
+    license='GPLv3',
     packages=find_packages(),
     classifiers=[
         'Development Status :: 3 - Alpha',
