@@ -22,24 +22,33 @@ static int SourceHighlight_init(SourceHighlightObject *self, PyObject *args, PyO
         return -1;
     }
     self->sourceHighlight=NULL;
-    if(outlang){
-        self->sourceHighlight=new srchilite::SourceHighlight(std::string(outlang)+".outlang");
-    }else{
-        self->sourceHighlight=new srchilite::SourceHighlight();
+    if(outlang==NULL){
+        outlang = "html";
     }
+    self->sourceHighlight=new srchilite::SourceHighlight(std::string(outlang)+".outlang");
 
     self->datadir = new std::string();
     if(datadir){
         self->sourceHighlight->setDataDir(datadir);
         self->datadir->replace(0,self->datadir->length(), datadir);
+        try{
+            self->sourceHighlight->checkOutLangDef(std::string(outlang)+".outlang");
+        }catch(std::exception){
+            PyErr_SetString(PyExc_ValueError, "invalid arguments");
+            return -1;
+        }
     }
     return 0;
 }
 
 static void SourceHighlight_dealloc(SourceHighlightObject *self)
 {
-    delete self->sourceHighlight;
-    delete self->datadir;
+    if(self->sourceHighlight){
+        delete self->sourceHighlight;
+    }
+    if(self->datadir){
+        delete self->datadir;
+    }
     Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
