@@ -6,6 +6,13 @@ pyhilite是[source-highlight](https://www.gnu.org/software/src-highlite/)的Pyth
 
 功能是把源代码转化为特定的语法高亮文件，比如HTML、linux终端等。
 
+##依赖
+pyhilite依赖srchilite库，该库由source-highlight程序提供。在Fedora 22使用如下命令安装
+
+    \# dnf install source-highlight-devel
+
+其他发行版的包名应该类似。
+
 ##安装
 
     ./setup.py install
@@ -19,3 +26,8 @@ pyhilite是[source-highlight](https://www.gnu.org/software/src-highlite/)的Pyth
     >>> h.highlight(input='hello.c', output='output.html')
 
 详细的介绍请看[WIKI](https://github.com/wiiiky/pyhilite/wiki)
+
+##TODO
+目前pyhilite并没有实现所有srchilite的功能，因为我也没搞清楚srchilite的所有用法，会继续更新。
+
+wiiiky@outlook.com
