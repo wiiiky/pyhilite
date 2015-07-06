@@ -20,6 +20,7 @@ setup(
     author='Wiky L',
     author_email='wiiiky@outlook.com',
     license='GPLv3',
+    scripts=['bin/highlight.py'],
     packages=['pyhilite'],
     package_dir={
         'pyhilite': 'pyhilite',
