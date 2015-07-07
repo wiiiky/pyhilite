@@ -9,7 +9,7 @@ pyhilite是[source-highlight](https://www.gnu.org/software/src-highlite/)的Pyth
 ##依赖
 pyhilite依赖srchilite库，该库由source-highlight程序提供。在Fedora 22使用如下命令安装
 
-    \# dnf install source-highlight-devel
+    # dnf install source-highlight-devel
 
 其他发行版的包名应该类似。
 

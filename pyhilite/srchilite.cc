@@ -10,7 +10,7 @@ typedef struct {
     PyObject_HEAD
     srchilite::SourceHighlight *sourceHighlight;
     std::string *datadir;
-}SourceHighlightObject;
+} SourceHighlightObject;
 
 /* 初始化函数 */
 static int SourceHighlight_init(SourceHighlightObject *self, PyObject *args, PyObject *kwds)
@@ -18,22 +18,22 @@ static int SourceHighlight_init(SourceHighlightObject *self, PyObject *args, PyO
     static char *kwlist[]= {"outlang", "datadir", NULL};
 
     char *outlang=NULL, *datadir=NULL;
-    if(!PyArg_ParseTupleAndKeywords(args,kwds, "|ss",kwlist, &outlang, &datadir)){
+    if(!PyArg_ParseTupleAndKeywords(args,kwds, "|ss",kwlist, &outlang, &datadir)) {
         return -1;
     }
     self->sourceHighlight=NULL;
-    if(outlang==NULL){
+    if(outlang==NULL) {
         outlang = "html";
     }
     self->sourceHighlight=new srchilite::SourceHighlight(std::string(outlang)+".outlang");
 
     self->datadir = new std::string();
-    if(datadir){
+    if(datadir) {
         self->sourceHighlight->setDataDir(datadir);
         self->datadir->replace(0,self->datadir->length(), datadir);
-        try{
+        try {
             self->sourceHighlight->checkOutLangDef(std::string(outlang)+".outlang");
-        }catch(std::exception){
+        } catch(std::exception) {
             PyErr_SetString(PyExc_ValueError, "invalid arguments");
             return -1;
         }
@@ -43,10 +43,10 @@ static int SourceHighlight_init(SourceHighlightObject *self, PyObject *args, PyO
 
 static void SourceHighlight_dealloc(SourceHighlightObject *self)
 {
-    if(self->sourceHighlight){
+    if(self->sourceHighlight) {
         delete self->sourceHighlight;
     }
-    if(self->datadir){
+    if(self->datadir) {
         delete self->datadir;
     }
     Py_TYPE(self)->tp_free((PyObject*)self);
@@ -55,11 +55,51 @@ static void SourceHighlight_dealloc(SourceHighlightObject *self)
 static PyObject *SourceHighlight_setDataDir(SourceHighlightObject *self, PyObject *args)
 {
     char *datadir=NULL;
-    if(!PyArg_ParseTuple(args, "s", &datadir)){
+    if(!PyArg_ParseTuple(args, "s", &datadir)) {
         return NULL;
     }
     self->sourceHighlight->setDataDir(datadir);
     self->datadir->replace(0,self->datadir->length(), datadir);
+    return Py_BuildValue("");
+}
+
+static PyObject *SourceHighlight_setStyleCssFile(SourceHighlightObject *self, PyObject *args)
+{
+    char *cssfile = NULL;
+    if(!PyArg_ParseTuple(args, "s", &cssfile)) {
+        return NULL;
+    }
+    self->sourceHighlight->setStyleCssFile(cssfile);
+    return Py_BuildValue("");
+}
+
+static PyObject *SourceHighlight_setGenerateLineNumbers(SourceHighlightObject *self, PyObject *args)
+{
+    int b;
+    if(!PyArg_ParseTuple(args, "p", &b)) {
+        return NULL;
+    }
+    self->sourceHighlight->setGenerateLineNumbers(b);
+    return Py_BuildValue("");
+}
+
+static PyObject *SourceHighlight_setGenerateLineNumberRefs(SourceHighlightObject *self, PyObject *args)
+{
+    int b;
+    if(!PyArg_ParseTuple(args, "p", &b)) {
+        return NULL;
+    }
+    self->sourceHighlight->setGenerateLineNumberRefs(b);
+    return Py_BuildValue("");
+}
+
+static PyObject *SourceHighlight_setOptimize(SourceHighlightObject *self, PyObject *args)
+{
+    int b;
+    if(!PyArg_ParseTuple(args, "p", &b)) {
+        return NULL;
+    }
+    self->sourceHighlight->setOptimize(b);
     return Py_BuildValue("");
 }
 
@@ -69,41 +109,41 @@ static PyObject *SourceHighlight_highlight(SourceHighlightObject *self, PyObject
     static char *kwlist1[] = {"data", "lang", "output", NULL};
     static char *kwlist2[] = {"input", "output", "lang", NULL};
 
-    try{
-        if(PyArg_ParseTupleAndKeywords(args,kwargs, "ss|s",kwlist1, &data, &lang, &output)){
+    try {
+        if(PyArg_ParseTupleAndKeywords(args,kwargs, "ss|s",kwlist1, &data, &lang, &output)) {
             std::string langFile(lang);
             langFile+=".lang";
             std::istringstream in(data);
-            if(output){
+            if(output) {
                 std::ofstream out(output);
                 self->sourceHighlight->highlight(in, out, langFile);
                 return Py_BuildValue("");
-            }else{
+            } else {
                 std::ostringstream out("");
                 self->sourceHighlight->highlight(in, out, langFile);
                 return Py_BuildValue("s", out.str().c_str());
             }
         }
         PyErr_Clear();
-        if(PyArg_ParseTupleAndKeywords(args, kwargs, "s|ss", kwlist2, &input, &output, &lang)){
+        if(PyArg_ParseTupleAndKeywords(args, kwargs, "s|ss", kwlist2, &input, &output, &lang)) {
             std::string langFile;
-            if(lang){
+            if(lang) {
                 langFile=std::string(lang)+".lang";
-            }else{
+            } else {
                 srchilite::LangMap langMap(self->datadir->c_str(), "lang.map");
                 langFile = langMap.getMappedFileNameFromFileName(input);
             }
-            if(output){
+            if(output) {
                 self->sourceHighlight->highlight(input, output, langFile);
                 return Py_BuildValue("");
-            }else{
+            } else {
                 std::ifstream in(input);
                 std::ostringstream out;
                 self->sourceHighlight->highlight(in, out, langFile);
                 return Py_BuildValue("s", out.str().c_str());
             }
         }
-    }catch(std::exception){
+    } catch(std::exception) {
         PyErr_SetString(PyExc_ValueError, "invalid arguments");
     }
     return NULL;
@@ -111,10 +151,27 @@ static PyObject *SourceHighlight_highlight(SourceHighlightObject *self, PyObject
 
 
 static PyMethodDef Sourcehighlight_methods[] = {
-    {"setDataDir", (PyCFunction)SourceHighlight_setDataDir, METH_VARARGS,
-        "设置当前的资源目录"},
-    {"highlight", (PyCFunction)SourceHighlight_highlight, METH_VARARGS | METH_KEYWORDS,
-        "高亮代码"},
+    {
+        "setDataDir", (PyCFunction)SourceHighlight_setDataDir, METH_VARARGS,
+        "设置当前的资源目录，资源目录下存放.lang、.outlang和style文件；一般情况下使用默认的资源目录。"
+    },
+    {
+        "setStyleCssFile", (PyCFunction)SourceHighlight_setStyleCssFile, METH_VARARGS,
+        "设置CSS文件，可以是文件绝对或者相对路径，或者在资源目录下。可以参考默认的default.css。注意，该函数必须在第一次调用highlight()之前调用，否则无效。"
+    },
+    {
+        "setGenerateLineNumbers", (PyCFunction)SourceHighlight_setGenerateLineNumbers, METH_VARARGS,
+        "设置是否显示行号"
+    },
+    {
+        "setGenerateLineNumberRefs", (PyCFunction)SourceHighlight_setGenerateLineNumberRefs, METH_VARARGS,
+        ""
+    },
+    {"setOptimize", (PyCFunction)SourceHighlight_setOptimize, METH_VARARGS, "设置是否开启优化"},
+    {
+        "highlight", (PyCFunction)SourceHighlight_highlight, METH_VARARGS | METH_KEYWORDS,
+        "生成高亮代码。"
+    },
     {NULL}
 };
 
@@ -166,12 +223,12 @@ static PyMethodDef hiliteMethods[] = {
 };
 
 static struct PyModuleDef hiliteModule = {
-   PyModuleDef_HEAD_INIT,
-   "SrouceHighlite",   /* name of module */
-   NULL, /* module documentation, may be NULL */
-   -1,       /* size of per-interpreter state of the module,
+    PyModuleDef_HEAD_INIT,
+    "SrouceHighlite",   /* name of module */
+    NULL, /* module documentation, may be NULL */
+    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
-   hiliteMethods,
+    hiliteMethods,
 };
 
 
@@ -179,7 +236,7 @@ PyMODINIT_FUNC
 PyInit_srchilite(void)
 {
     PyObject *mod = PyModule_Create(&hiliteModule);
-    if(PyType_Ready(&SourceHighlightType) < 0 || mod==NULL){
+    if(PyType_Ready(&SourceHighlightType) < 0 || mod==NULL) {
         return NULL;
     }
     Py_INCREF(&SourceHighlightType);
