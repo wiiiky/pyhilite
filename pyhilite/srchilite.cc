@@ -63,6 +63,16 @@ static PyObject *SourceHighlight_setDataDir(SourceHighlightObject *self, PyObjec
     return Py_BuildValue("");
 }
 
+static PyObject *Sourcehighlight_setTitle(SourceHighlightObject *self, PyObject *args)
+{
+    char *title = NULL;
+    if(!PyArg_ParseTuple(args, "s", &title)){
+        return NULL;
+    }
+    self->sourceHighlight->setTitle(title);
+    return Py_BuildValue("");
+}
+
 static PyObject *SourceHighlight_setStyleCssFile(SourceHighlightObject *self, PyObject *args)
 {
     char *cssfile = NULL;
@@ -70,6 +80,16 @@ static PyObject *SourceHighlight_setStyleCssFile(SourceHighlightObject *self, Py
         return NULL;
     }
     self->sourceHighlight->setStyleCssFile(cssfile);
+    return Py_BuildValue("");
+}
+
+static PyObject *SourceHighlight_setStyleFile(SourceHighlightObject *self, PyObject *args)
+{
+    char *stylefile = NULL;
+    if(!PyArg_ParseTuple(args, "s", &stylefile)) {
+        return NULL;
+    }
+    self->sourceHighlight->setStyleFile(stylefile);
     return Py_BuildValue("");
 }
 
@@ -154,6 +174,14 @@ static PyMethodDef Sourcehighlight_methods[] = {
     {
         "setDataDir", (PyCFunction)SourceHighlight_setDataDir, METH_VARARGS,
         "设置当前的资源目录，资源目录下存放.lang、.outlang和style文件；一般情况下使用默认的资源目录。"
+    },
+    {
+        "setTitle", (PyCFunction)Sourcehighlight_setTitle, METH_VARARGS,
+        "设置标题，好像没有什么用"
+    },
+    {
+        "setStyleFile", (PyCFunction)SourceHighlight_setStyleFile, METH_VARARGS,
+        "设置Style文件"
     },
     {
         "setStyleCssFile", (PyCFunction)SourceHighlight_setStyleCssFile, METH_VARARGS,
