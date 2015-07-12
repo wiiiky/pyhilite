@@ -30,3 +30,4 @@ if args.output == 'STDOUT':
     print(formatted)
 else:
     open(args.output, 'w').write(formatted)
+

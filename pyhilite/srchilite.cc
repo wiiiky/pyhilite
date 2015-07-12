@@ -1,3 +1,4 @@
+#include <boost/algorithm/string/predicate.hpp>
 #include <srchilite/sourcehighlight.h>
 #include <srchilite/langmap.h>
 #include <iostream>
@@ -132,7 +133,9 @@ static PyObject *SourceHighlight_highlight(SourceHighlightObject *self, PyObject
     try {
         if(PyArg_ParseTupleAndKeywords(args,kwargs, "ss|s",kwlist1, &data, &lang, &output)) {
             std::string langFile(lang);
-            langFile+=".lang";
+            if(!boost::algorithm::ends_with(langFile, ".lang")){
+                langFile+=".lang";
+            }
             std::istringstream in(data);
             if(output) {
                 std::ofstream out(output);
@@ -148,10 +151,13 @@ static PyObject *SourceHighlight_highlight(SourceHighlightObject *self, PyObject
         if(PyArg_ParseTupleAndKeywords(args, kwargs, "s|ss", kwlist2, &input, &output, &lang)) {
             std::string langFile;
             if(lang) {
-                langFile=std::string(lang)+".lang";
+                langFile=std::string(lang);
             } else {
                 srchilite::LangMap langMap(self->datadir->c_str(), "lang.map");
                 langFile = langMap.getMappedFileNameFromFileName(input);
+            }
+            if(!boost::algorithm::ends_with(langFile, ".lang")){
+                langFile+=".lang";
             }
             if(output) {
                 self->sourceHighlight->highlight(input, output, langFile);

@@ -20,7 +20,7 @@ setup(
     author='Wiky L',
     author_email='wiiiky@outlook.com',
     license='GPLv3',
-    scripts=['bin/highlight.py'],
+    scripts=['bin/highlight.py', 'bin/hicat.py'],
     packages=['pyhilite'],
     package_dir={
         'pyhilite': 'pyhilite',
@@ -35,5 +35,6 @@ setup(
         'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
-    ]
+    ],
+    test_suite = 'tests.lib.PyHiLiteTests'
 )
