@@ -13,6 +13,16 @@ typedef struct {
     std::string *datadir;
 } SourceHighlightObject;
 
+
+static std::string getFileDef(const char *file, const char *suffix)
+{
+    std::string s(file);
+    if(!boost::algorithm::ends_with(file, suffix)){
+        s += suffix;
+    }
+    return s;
+}
+
 /* 初始化函数 */
 static int SourceHighlight_init(SourceHighlightObject *self, PyObject *args, PyObject *kwds)
 {
@@ -26,14 +36,14 @@ static int SourceHighlight_init(SourceHighlightObject *self, PyObject *args, PyO
     if(outlang==NULL) {
         outlang = "html";
     }
-    self->sourceHighlight=new srchilite::SourceHighlight(std::string(outlang)+".outlang");
+    self->sourceHighlight=new srchilite::SourceHighlight(getFileDef(outlang, ".outlang"));
 
     self->datadir = new std::string();
     if(datadir) {
         self->sourceHighlight->setDataDir(datadir);
         self->datadir->replace(0,self->datadir->length(), datadir);
         try {
-            self->sourceHighlight->checkOutLangDef(std::string(outlang)+".outlang");
+            self->sourceHighlight->checkOutLangDef(getFileDef(outlang, ".outlang"));
         } catch(std::exception) {
             PyErr_SetString(PyExc_ValueError, "invalid arguments");
             return -1;
@@ -124,6 +134,34 @@ static PyObject *SourceHighlight_setOptimize(SourceHighlightObject *self, PyObje
     return Py_BuildValue("");
 }
 
+static PyObject *SourceHighlight_checkLangDef(SourceHighlightObject *self, PyObject *args)
+{
+    char *lang = NULL;
+    if(!PyArg_ParseTuple(args, "s", &lang)) {
+        return NULL;
+    }
+    try {
+        self->sourceHighlight->checkLangDef(getFileDef(lang, ".lang"));
+    } catch(std::exception) {
+        Py_RETURN_FALSE;
+    }
+    Py_RETURN_TRUE;
+}
+
+static PyObject *SourceHighlight_checkOutLangDef(SourceHighlightObject *self, PyObject *args)
+{
+    char *lang = NULL;
+    if(!PyArg_ParseTuple(args, "s", &lang)) {
+        return NULL;
+    }
+    try {
+        self->sourceHighlight->checkOutLangDef(getFileDef(lang, ".outlang"));
+    } catch(std::exception) {
+        Py_RETURN_FALSE;
+    }
+    Py_RETURN_TRUE;
+}
+
 static PyObject *SourceHighlight_highlight(SourceHighlightObject *self, PyObject *args, PyObject *kwargs)
 {
     char *data=NULL, *input=NULL, *output=NULL, *lang=NULL;
@@ -132,10 +170,7 @@ static PyObject *SourceHighlight_highlight(SourceHighlightObject *self, PyObject
 
     try {
         if(PyArg_ParseTupleAndKeywords(args,kwargs, "ss|s",kwlist1, &data, &lang, &output)) {
-            std::string langFile(lang);
-            if(!boost::algorithm::ends_with(langFile, ".lang")){
-                langFile+=".lang";
-            }
+            std::string langFile =getFileDef(lang, ".lang");
             std::istringstream in(data);
             if(output) {
                 std::ofstream out(output);
@@ -151,13 +186,10 @@ static PyObject *SourceHighlight_highlight(SourceHighlightObject *self, PyObject
         if(PyArg_ParseTupleAndKeywords(args, kwargs, "s|ss", kwlist2, &input, &output, &lang)) {
             std::string langFile;
             if(lang) {
-                langFile=std::string(lang);
+                langFile=getFileDef(lang, ".lang");
             } else {
                 srchilite::LangMap langMap(self->datadir->c_str(), "lang.map");
                 langFile = langMap.getMappedFileNameFromFileName(input);
-            }
-            if(!boost::algorithm::ends_with(langFile, ".lang")){
-                langFile+=".lang";
             }
             if(output) {
                 self->sourceHighlight->highlight(input, output, langFile);
@@ -205,6 +237,14 @@ static PyMethodDef Sourcehighlight_methods[] = {
     {
         "highlight", (PyCFunction)SourceHighlight_highlight, METH_VARARGS | METH_KEYWORDS,
         "生成高亮代码。"
+    },
+    {
+        "checkLangDef", (PyCFunction)SourceHighlight_checkLangDef, METH_VARARGS,
+        "检查指定的语言是否被支持"
+    },
+    {
+        "checkOutLangDef", (PyCFunction)SourceHighlight_checkOutLangDef, METH_VARARGS,
+        "检查指定的输出格式是否被支持"
     },
     {NULL}
 };
