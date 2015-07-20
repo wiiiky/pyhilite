@@ -14,7 +14,7 @@ srchilite = Extension('pyhilite.srchilite',
 setup(
     name='pyhilite',
     version='0.1.0',
-    description='Python3 Wrapper for GNU source-highlight',
+    description='Python3 binding of GNU source-highlight C++ library',
     long_description=''.join(open('README').readlines()),
     keywords='Source Code, Highlight, HTML, Latex',
     author='Wiky L',
