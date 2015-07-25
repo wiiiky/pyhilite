@@ -176,11 +176,10 @@ static PyObject *SourceHighlight_highlight(SourceHighlightObject *self, PyObject
                 std::ofstream out(output);
                 self->sourceHighlight->highlight(in, out, langFile);
                 return Py_BuildValue("");
-            } else {
-                std::ostringstream out("");
-                self->sourceHighlight->highlight(in, out, langFile);
-                return Py_BuildValue("s", out.str().c_str());
             }
+            std::ostringstream out("");
+            self->sourceHighlight->highlight(in, out, langFile);
+            return Py_BuildValue("s", out.str().c_str());
         }
         PyErr_Clear();
         if(PyArg_ParseTupleAndKeywords(args, kwargs, "s|ss", kwlist2, &input, &output, &lang)) {
@@ -194,13 +193,18 @@ static PyObject *SourceHighlight_highlight(SourceHighlightObject *self, PyObject
             if(output) {
                 self->sourceHighlight->highlight(input, output, langFile);
                 return Py_BuildValue("");
-            } else {
-                std::ifstream in(input);
-                std::ostringstream out;
-                self->sourceHighlight->highlight(in, out, langFile);
-                return Py_BuildValue("s", out.str().c_str());
             }
+            std::ifstream in(input);
+            if(!in){
+                throw 1;
+            }
+            std::ostringstream out;
+            self->sourceHighlight->highlight(in, out, langFile);
+            in.close();
+            return Py_BuildValue("s", out.str().c_str());
         }
+    } catch (int){
+        PyErr_SetString(PyExc_FileNotFoundError, "file not found");
     } catch(std::exception) {
         PyErr_SetString(PyExc_ValueError, "invalid arguments");
     }

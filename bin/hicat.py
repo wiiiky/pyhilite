@@ -17,13 +17,21 @@ hilite = pyhilite.SourceHighlight(outlang='esc')
 if args.number:
     hilite.setGenerateLineNumbers(True)
 
+
+def cat(filename):
+    try:
+        print(hilite.highlight(input=filename))
+    except ValueError as e:
+        with open(filename) as f:
+            print(f.read())
+
 n = len(args.files)
 if n == 1:
-    print(hilite.highlight(input=args.files[0]))
+    cat(args.files[0])
 else:
     for i in range(0, n):
         f = args.files[i]
         print('%s:' % f)
-        print(hilite.highlight(input=f))
-        if i < n-1:
+        cat(f)
+        if i < n - 1:
             print()
