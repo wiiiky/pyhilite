@@ -13,7 +13,7 @@ srchilite = Extension('pyhilite.srchilite',
 
 setup(
     name='pyhilite',
-    version='0.1.0',
+    version='0.2.0',
     description='Python3 binding of GNU source-highlight C++ library',
     long_description=''.join(open('README').readlines()),
     keywords='Source Code, Highlight, HTML, Latex',
@@ -32,7 +32,7 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: Lesser GNU General Public License v3 (LGPLv3)',
+        'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
     ],
