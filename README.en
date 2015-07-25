@@ -28,7 +28,6 @@ the package name for other linux distributions should be similar.
 
         pip3 install pyhilite
 
-
 ##Sample
 
     >>> import pyhilite
@@ -36,3 +35,6 @@ the package name for other linux distributions should be similar.
     >>> h.highlight(input='hello.c')
     '<!-- Generator: GNU source-highlight 3.1.7\nby Lorenzo Bettini\nhttp://www.lorenzobettini.it\nhttp://www.gnu.org/software/src-highlite -->\n<pre><tt><b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;stdio.h&gt;</font>\n\n\n<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <b><font color="#0000FF">const</font></b> <font color="#009900">char</font> <font color="#990000">*</font>argv<font color="#990000">[])</font>\n<font color="#FF0000">{</font>\n    <b><font color="#000000">printf</font></b><font color="#990000">(</font><font color="#FF0000">"hello world!</font><font color="#CC33CC">\\n</font><font color="#FF0000">"</font><font color="#990000">);</font>\n    <b><font color="#0000FF">return</font></b> <font color="#993399">0</font><font color="#990000">;</font>\n<font color="#FF0000">}</font>\n</tt></pre>\n'
     >>> h.highlight(input='hello.c', output='output.html')
+
+##Screenshot
+![hicat.py](https://github.com/wiiiky/pyhilite/blob/master/screenshot.png)
